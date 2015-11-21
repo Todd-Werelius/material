@@ -36,8 +36,10 @@ module.exports = function(config) {
         'node_modules/angular-aria/angular-aria.js',
         'node_modules/angular-sanitize/angular-sanitize.js',
         'node_modules/angular-mocks/angular-mocks.js',
+        'node_modules/traceur/bin/traceur-runtime.js',
         'test/angular-material-mocks.js',
-        'test/angular-material-spec.js'
+        'test/angular-material-spec.js',
+
       ]);
 
   var testSrc = process.env.KARMA_TEST_COMPRESSED ? COMPILED_SRC : UNCOMPILED_SRC;
@@ -66,7 +68,7 @@ module.exports = function(config) {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Firefox', 'PhantomJS'],
+    browsers: ['Chrome', 'PhantomJS2'],
 
     // you can define custom flags
     customLaunchers: {
