@@ -8,8 +8,12 @@ call gulp karma
 rmdir ..\angular-material-midnight-dist\docs /S /Q
 del   ..\angular-material-midnight-dist\*.js /S /Q
 del   ..\angular-material-midnight-dist\*.css /S /Q
-xcopy .\dist\*.* ..\angular-material-midnight-dist\*.* /S /E /R /Y
 mkdir ..\angular-material-midnight-dist
+xcopy .\dist\*.* ..\angular-material-midnight-dist\*.* /S /E /R /Y
+del ..\angular-material-midnight-dist\angular-material.layouts.css
+del ..\angular-material-midnight-dist\angular-material.layouts.min.css
+del ..\angular-material-midnight-dist\angular-material.scss
+del ..\angular-material-midnight-dist\angular-material-mock.js
 cd ..\angular-material-midnight-dist
 del commitlabel.log /Q
 call committime.bat
