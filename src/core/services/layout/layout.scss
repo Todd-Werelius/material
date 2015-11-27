@@ -191,6 +191,7 @@
 
   // Main Axis Center
   .#{$name}-start,
+  .#{$name}-start-stretch,
   .#{$name}-start-start,
   .#{$name}-start-center,
   .#{$name}-start-end
@@ -200,6 +201,7 @@
 
   // Main Axis Center
   .#{$name}-center,           //stretch
+  .#{$name}-center-stretch,
   .#{$name}-center-start,
   .#{$name}-center-center,
   .#{$name}-center-end
@@ -209,6 +211,7 @@
 
   // Main Axis End
   .#{$name}-end, //stretch
+  .#{$name}-end-stretch, //stretch
   .#{$name}-end-start,
   .#{$name}-end-center,
   .#{$name}-end-end
@@ -216,7 +219,7 @@
     justify-content: flex-end;
   }
 
-  // Main Axis Center
+  // Main Axis Default
   .#{$name}-stretch,
   .#{$name}-stretch-center,
   .#{$name}-stretch-start,
@@ -227,6 +230,7 @@
 
   // Main Axis Space Around
   .#{$name}-space-around, //stretch
+  .#{$name}-space-around-stretch,
   .#{$name}-space-around-center,
   .#{$name}-space-around-start,
   .#{$name}-space-around-end
@@ -236,6 +240,7 @@
 
   // Main Axis Space Between
   .#{$name}-space-between, //stretch
+  .#{$name}-space-between-stretch,
   .#{$name}-space-between-center,
   .#{$name}-space-between-start,
   .#{$name}-space-between-end
