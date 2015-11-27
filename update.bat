@@ -17,6 +17,7 @@ del ..\angular-material-midnight-dist\angular-material-mocks.js
 cd ..\angular-material-midnight-dist
 del commitlabel.log /Q
 call committime.bat
+git pull
 git add *
 git commit -F commitlabel.log
 git push
