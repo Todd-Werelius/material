@@ -4,6 +4,7 @@ cd \angular-material\material
 git fetch upstream
 git checkout master
 git merge upstream/master
+git push
 call gulp karma
 del   ..\angular-material-midnight-dist\*.js /S /Q
 del   ..\angular-material-midnight-dist\*.css /S /Q
