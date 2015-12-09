@@ -222,18 +222,6 @@
     justify-content: flex-end;
   }
 
-<<<<<<< HEAD
-  // Main Axis Default
-  .#{$name}-stretch,
-  .#{$name}-stretch-center,
-  .#{$name}-stretch-start,
-  .#{$name}-stretch-end
-  {
-    justify-content: stretch;
-  }
-
-=======
->>>>>>> upstream/master
   // Main Axis Space Around
   .#{$name}-space-around, //stretch
   .#{$name}-space-around-stretch,
