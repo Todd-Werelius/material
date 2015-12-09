@@ -80,7 +80,8 @@ var NUM_EXTRA = 3;
 
 /** @ngInject */
 function VirtualRepeatContainerController(
-    $$rAF, $mdUtil, $parse, $window, $scope, $element, $attrs) {
+    $$rAF, $mdUtil, $parse, $rootScope, $window, $scope, $element, $attrs) {
+  this.$rootScope = $rootScope;
   this.$scope = $scope;
   this.$element = $element;
   this.$attrs = $attrs;
@@ -132,19 +133,27 @@ function VirtualRepeatContainerController(
   // make a best effort at re-measuring as it changes.
   var boundUpdateSize = angular.bind(this, this.updateSize);
 
-  $$rAF(function() {
+  $$rAF(angular.bind(this, function() {
     boundUpdateSize();
 
     var debouncedUpdateSize = $mdUtil.debounce(boundUpdateSize, 10, null, false);
     var jWindow = angular.element($window);
+
+    // Make one more attempt to get the size if it is 0.
+    // This is not by any means a perfect approach, but there's really no
+    // silver bullet here.
+    if (!this.size) {
+      debouncedUpdateSize();
+    }
 
     jWindow.on('resize', debouncedUpdateSize);
     $scope.$on('$destroy', function() {
       jWindow.off('resize', debouncedUpdateSize);
     });
 
+    $scope.$emit('$md-resize-enable');
     $scope.$on('$md-resize', boundUpdateSize);
-  });
+  }));
 }
 
 
@@ -187,6 +196,7 @@ VirtualRepeatContainerController.prototype.updateSize = function() {
   this.size = this.isHorizontal()
       ? this.$element[0].clientWidth
       : this.$element[0].clientHeight;
+
   this.repeater && this.repeater.containerUpdated();
 };
 
@@ -245,7 +255,8 @@ VirtualRepeatContainerController.prototype.sizeScroller_ = function(size) {
 VirtualRepeatContainerController.prototype.autoShrink_ = function(size) {
   var shrinkSize = Math.max(size, this.autoShrinkMin * this.repeater.getItemSize());
   if (this.autoShrink && shrinkSize !== this.size) {
-    if (shrinkSize < (this.originalSize || this.size)) {
+    var currentSize = this.originalSize || this.size;
+    if (!currentSize || shrinkSize < currentSize) {
       if (!this.originalSize) {
         this.originalSize = this.size;
       }
@@ -329,7 +340,7 @@ VirtualRepeatContainerController.prototype.handleScroll_ = function() {
     if (topIndex !== this.topIndex && topIndex < this.repeater.itemsLength) {
       this.topIndex = topIndex;
       this.bindTopIndex.assign(this.$scope, topIndex);
-      if (!this.$scope.$root.$$phase) this.$scope.$digest();
+      if (!this.$rootScope.$$phase) this.$scope.$digest();
     }
   }
 
@@ -403,12 +414,14 @@ function VirtualRepeatDirective($parse) {
 
 
 /** @ngInject */
-function VirtualRepeatController($scope, $element, $attrs, $browser, $document, $$rAF) {
+function VirtualRepeatController($scope, $element, $attrs, $browser, $document, $rootScope,
+    $$rAF) {
   this.$scope = $scope;
   this.$element = $element;
   this.$attrs = $attrs;
   this.$browser = $browser;
   this.$document = $document;
+  this.$rootScope = $rootScope;
   this.$$rAF = $$rAF;
 
   /** @type {boolean} Whether we are in on-demand mode. */
@@ -549,7 +562,7 @@ VirtualRepeatController.prototype.containerUpdated = function() {
             this.$$rAF(angular.bind(this, this.readItemSize_));
           }
         }));
-    if (!this.$scope.$root.$$phase) this.$scope.$digest();
+    if (!this.$rootScope.$$phase) this.$scope.$digest();
 
     return;
   } else if (!this.sized) {
@@ -740,7 +753,7 @@ VirtualRepeatController.prototype.updateBlock_ = function(block, index) {
   // Perform digest before reattaching the block.
   // Any resulting synchronous dom mutations should be much faster as a result.
   // This might break some directives, but I'm going to try it for now.
-  if (!this.$scope.$root.$$phase) {
+  if (!this.$rootScope.$$phase) {
     block.scope.$digest();
   }
 };

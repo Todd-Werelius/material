@@ -73,6 +73,17 @@ describe('<md-virtual-repeat>', function() {
     return component[0].querySelectorAll('[md-virtual-repeat]');
   }
 
+  it('should $emit $md-resize-enable at startup', function() {
+    var emitted = false;
+    scope.$on('$md-resize-enable', function() {
+      emitted = true;
+    });
+
+    createRepeater();
+
+    expect(emitted).toBe(true);
+  });
+
   it('should render only enough items to fill the viewport + 3 (vertical)', function() {
     createRepeater();
     scope.items = createItems(NUM_ITEMS);
@@ -574,13 +585,28 @@ describe('<md-virtual-repeat>', function() {
     createRepeater();
     // Expect 13 children (10 + 3 extra).
     expect(offsetter.children().length).toBe(13);
-    
+
     container.css('height', '400px');
     scope.$parent.$broadcast('$md-resize');
 
     // Expect 43 children (40 + 3 extra).
     expect(offsetter.children().length).toBe(43);
   });
+
+  it('should shrink when initial results require shrinking', inject(function() {
+    scope.items = [
+      { value: 'alabama', display: 'Alabama' },
+      { value: 'alaska', display: 'Alaska' },
+      { value: 'arizona', display: 'Arizona' }
+    ];
+    createRepeater();
+    var controller = component.controller('mdVirtualRepeatContainer');
+    controller.autoShrink = true;
+    controller.autoShrink_(50);
+
+    expect(component[0].clientHeight).toBe(50);
+    expect(offsetter.children().length).toBe(3);
+  }));
 
   /**
    * Facade to access transform properly even when jQuery is used;
@@ -589,6 +615,4 @@ describe('<md-virtual-repeat>', function() {
   function getTransform(target) {
     return target[0].style.webkitTransform || target.css('transform');
   }
-
-
 });
