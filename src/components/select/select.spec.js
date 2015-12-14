@@ -150,8 +150,26 @@ describe('<md-select>', function() {
     //expect($document[0].activeElement).toBe(select[0]);
   }));
 
+  it('should remove the input-container focus state', inject(function($rootScope, $timeout) {
+    $rootScope.val = 0;
+    var element = setupSelect('ng-model="val"', [1, 2, 3]);
+    var select = element.find('md-select');
+    var controller = element.controller('mdInputContainer');
+    $timeout.flush();
+    controller.setHasValue(true);
+
+    select.triggerHandler('focus');
+
+    expect(element.hasClass('md-input-focused')).toBe(true);
+
+    select.triggerHandler('blur');
+
+    expect(element.hasClass('md-input-focused')).toBe(false);
+
+  }));
+
   describe('input container', function() {
-    it('should set has-value class on container for non-ng-model input', inject(function($rootScope, $document) {
+    it('should set has-value class on container for non-ng-model input', inject(function($rootScope) {
       var el = setupSelect('ng-model="$root.model"', [1, 2, 3]);
       var select = el.find('md-select');
 
