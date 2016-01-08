@@ -72,8 +72,8 @@
         html: processHtml(demo),
         head: LINK_FONTS_ROBOTO,
 
-        js: processJs(files.js),
-        css: mergeFiles( files.css ).join(' '),
+        js: appendLicense(processJs(files.js), 'js'),
+        css: appendLicense(mergeFiles( files.css ).join(' '), 'css'),
 
         js_external: externalScripts.concat([CORE_JS, ASSET_CACHE_JS]).join(';'),
         css_external: [CORE_CSS, DOC_CSS].join(';')
@@ -83,7 +83,8 @@
     // Modifies index.html with necessary changes in order to display correctly in codepen
     // See each processor to determine how each modifies the html
     function processHtml(demo) {
-      var index = demo.files.index.contents;
+
+      var allContent = demo.files.index.contents;
 
       var processors = [
         applyAngularAttributesToParentElement,
@@ -92,10 +93,30 @@
       ];
 
       processors.forEach(function(processor) {
-        index = processor(index, demo);
+        allContent = processor(allContent, demo);
       });
 
-      return index;
+      return appendLicense(allContent, 'html');
+    }
+
+    /**
+     * Append MIT License information to all CodePen source samples(HTML, JS, CSS)
+     */
+    function appendLicense(content, lang) {
+      var commentStart = '', commentEnd = '';
+
+      switch(lang) {
+        case 'html' : commentStart = '<!--'; commentEnd = '-->'; break;
+        case 'js'   : commentStart = '/**';  commentEnd = '**/'; break;
+        case 'css'  : commentStart = '/*';   commentEnd = '*/';  break;
+      }
+
+      return content + '\n\n'+
+        commentStart + '\n'+
+        'Copyright 2016 Google Inc. All Rights Reserved. \n'+
+        'Use of this source code is governed by an MIT-style license that can be in found'+
+        'in the LICENSE file at http://material.angularjs.org/license.\n'+
+        commentEnd;
     }
 
     // Applies modifications the javascript prior to sending to codepen.
